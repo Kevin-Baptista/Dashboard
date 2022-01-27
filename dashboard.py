@@ -50,7 +50,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H2(id="Nome do produto", children="",
+                    html.H2(id="nome_produto", children= "",
                             style={'fontWeight': 'bold'}),
                     html.H5("Total de equipamentos")
                 ])
@@ -59,7 +59,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H2(id="codigo do equipamento", children="",
+                    html.H2(id="codigo_do_equipamento", children="",
                             style={'fontWeight': 'bold'}),
                     html.H5("Equipamentos que foram para a manutenção")
                 ])
@@ -146,6 +146,25 @@ def generate_chart(names):
 def generate_chart(names):
     fig = px.pie(teste, values='custo de reparação', names=names)
     return fig
+
+@app.callback(
+    Output("codigo_do_equipamento", "children"),
+    [Input("names", "value")]
+)
+def generate_chart(names):
+    x = len(df)
+    return x
+
+@app.callback(
+    Output("nome_produto", "children"),
+    [Input("names", "value")]
+)
+def generate_chart(names):
+    x = len(dh)
+    return x
+
+
+#result = PessoModel.query.fliter_by(id=pesso)
 
 
 if __name__ == '__main__':
