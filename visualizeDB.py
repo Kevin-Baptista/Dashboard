@@ -1,10 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import mysql.connector
+import pandas as pd
 
-mydb=mysql.connector.connect(host='localhost',user='root',password='',database='cio')
-mycursor=mydb.cursor()
+equipamentos = pd.read_sql_table('equipamentos','sqlite:///cio.db')
+requisicoes = pd.read_sql_table('requisicoes','sqlite:///cio.db')
+i =0
+j =0
+while equipamentos.values[i][3]:
+    if equipamentos.values[i][0] in requisicoes:
+        print(equipamentos.values[i])
 
-
-mycursor.execute("select * from equipamentos")
-result = mycursor.fetchall
