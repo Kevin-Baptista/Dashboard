@@ -344,3 +344,41 @@ with engine.connect() as connection:
             raise
         else:
                 transaction.commit()
+
+values_requisisoes =[(1, '01/10/2021', 'Preventiva', '02/10/2021', 'concluido', 1004, '10 000,00 CVE'),
+(2, '20/01/2021', 'Corretiva', '20/04/2021', 'concluido', 1521, '10 000,00 CVE'),
+(3, '23/01/2021', 'Preditiva', '23/05/2021', 'concluido', 1202, '10 000,00 CVE'),
+(4, '23/01/2021', 'Corretiva', '23/03/2021', 'concluido', 1603, '10 000,00 CVE'),
+(5, '25/02/2021', 'Preditiva', '25/04/2021', 'concluido', 1401, '10 000,00 CVE'),
+(6, '03/09/2021', 'Corretiva', '07/09/2021', 'concluido', 1402, '10 000,00 CVE'),
+(7, '16/03/2021', 'Preditiva', '16/09/2021', 'concluido', 1409, '10 000,00 CVE'),
+(8, '04/09/2021', 'Corretiva', '', 'cancelado', 1708, '0,00 CVE'),
+(9, '04/10/2021', 'Preditiva', '12/10/2021', 'concluido', 1417, '10 000,00 CVE'),
+(10, '18/05/2021', 'Corretiva', '18/06/2021', 'concluido', 1414, '10 000,00 CVE'),
+(11, '19/05/2021', 'Preventiva', '19/05/2021', 'concluido', 1424, '10 000,00 CVE'),
+(12, '22/06/2021', 'Preventiva', '22/06/2021', 'concluido', 1425, '10 000,00 CVE'),
+(13, '22/06/2021', 'Preventiva', '22/06/2021', 'concluido', 1426, '10 000,00 CVE'),
+(14, '07/09/2021', 'Corretiva', '12/09/2021', 'concluido', 1427, '10 000,00 CVE'),
+(15, '07/10/2021', 'Corretiva', '08/10/2021', 'concluido', 1206, '10 000,00 CVE'),
+(16, '08/10/2021', 'Corretiva', '', 'em aberto', 1324, ''),
+(17, '21/08/2021', 'Corretiva', '', 'em aberto', 1302, ''),
+(18, '21/08/2021', 'Corretiva', '', 'em aberto', 1318, ''),
+(19, '11/08/2021', 'Corretiva', '', 'em aberto', 1421, ''),
+(20, '12/08/2021', 'Preditiva', '', 'em aberto', 1408, ''),
+(21, '12/10/2021', 'Corretiva', '', 'em aberto', 1105, ''),
+(22, '13/10/2021', 'Corretiva', '15/10/2021', 'concluido', 2008, '3 000,00 CVE'),
+(23, '14/11/2021', 'Corretiva', '', 'em aberto', 2107, ''),
+(24, '15/11/2021', 'Preditiva', '', 'em aberto', 2021, '')]
+
+with engine.connect() as connection:
+    with connection.begin() as transaction:
+        try:
+            markers = ','.join('?' * len(values_requisisoes[0]))
+            ins = 'INSERT INTO {tablename} VALUES ({markers})'
+            ins = ins.format(tablename=requisicoes.name, markers=markers)
+            connection.execute(ins, values_requisisoes)
+        except:
+            transaction.rollback()
+            raise
+        else:
+                transaction.commit()

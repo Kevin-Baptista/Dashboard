@@ -1,6 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import mysql.connector
+import pandas as pd
 
-mydb=mysql.connector.connect(host=”localhost”,user=”root”,password=”Your_Password”,database=”Database_Name”)
-mycursor=mydb.cursor()
+equipamentos = pd.read_sql_table('equipamentos','sqlite:///cio.db')
+requisicoes = pd.read_sql_table('requisicoes','sqlite:///cio.db')
+i =0
+while equipamentos.values[i][3]:
+    if equipamentos.values[i][0] in requisicoes:
+        print(equipamentos.values[i])
+
