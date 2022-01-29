@@ -13,44 +13,23 @@ import plotly.graph_objs as go
 
 import json
 
-
-#external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-
-#app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-
-# importando a base de dados
+# Leitura da base de dados
 engine = sqlalchemy.create_engine(
     'mysql+pymysql://root:Kevin580p&@127.0.0.1:3306/cio_manutencao')
 
-df = pd.read_sql_table('requisicoes', engine)
-""" df = pd.read_sql_query('SELECT `Nome do Produto` From requisicoes',engine)
-print(df) """
-
-dh = pd.read_sql_table('equipamentos', engine)
-
-teste = pd.merge(pd.read_sql_table('equipamentos', engine), pd.read_sql_table(
+cio = pd.merge(pd.read_sql_table('equipamentos', engine), pd.read_sql_table(
     'requisicoes', engine), on="codigo do equipamento", how="outer")
+req = pd.read_sql_table('requisicoes', engine)
 
 
-""" fig = px.pie(df, values='custo de reparação', names='Tipo de Manutenção')
-fig.show() """
-
-""" app.layout = dash_table.DataTable(
-    data=teste.to_dict('records'),
-    columns=[{'id': c, 'name': c} for c in {"Agências","Nome do Produto","estado do equipamento","status"}],
-    page_action='none',
-    style_table={'height': '300px', 'overflowY': 'auto'}
-) """
-
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H2(id="nome_produto", children= "",
+                    html.H2(id="total_de_equipamentos", children="",
                             style={'fontWeight': 'bold'}),
                     html.H5("Total de equipamentos")
                 ])
@@ -59,7 +38,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H2(id="codigo_do_equipamento", children="",
+                    html.H2(id="manutencao_equipamentos", children="",
                             style={'fontWeight': 'bold'}),
                     html.H5("Equipamentos que foram para a manutenção")
                 ])
@@ -68,7 +47,7 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardBody([
-                    html.H2(id="custo de reparação", children="",
+                    html.H2(id="total_reparação", children="",
                             style={'fontWeight': 'bold'}),
                     html.H5("Custo de reparação")
                 ])
@@ -77,94 +56,225 @@ app.layout = dbc.Container([
     ], className="mb-3"),
     dbc.Row([
         dbc.Col([
-            dash_table.DataTable(
-                style_data={
-                    'whiteSpace': 'normal',
-                    'height': 'auto',
-                },
-                style_cell={'textAlign': 'left'},
-                data=teste.to_dict('records'),
-                columns=[{'id': c, 'name': c} for c in {"Agências",
-                                                        "Nome do Produto", "estado do equipamento", "status"}],
-                fixed_rows={'headers': True},
-                page_action='none',
-                style_table={'height': '300px', 'overflowY': 'auto'}
-            )
-        ])
-    ]),
-    dbc.Row([
-        dbc.Col([
-            html.P("Nome:"),
+            html.P("Dispositivos da Empresa"),
             dcc.Dropdown(
-                id='names',
-                value='Nome do Produto',
+                id='dispositivos',
                 options=[{'value': x, 'label': x}
-                         for x in ['Nome do Produto', 'Agências']],
-
-                clearable=False
+                         for x in ['Cofre', 'Reciclador de dinheiro', 'Contador de moedas', 'contador de notas',
+                                   'Computador', 'Impressora', 'router', 'switch', 'Mouse', 'Teclado', 'Monitor', 'Ar-Condicionado']],
+                clearable=True
             )
-        ])
-    ]),
-    dbc.Row([
+        ]),
         dbc.Col([
-            html.P("Estado dos equipamentos"),
+            html.P("Agencias"),
             dcc.Dropdown(
-                id='equipamentos',
-                value='estado do equipamento',
+                id='agencias',
                 options=[{'value': x, 'label': x}
-                         for x in ['estado do equipamento']],
-
-                clearable=False
+                         for x in ['Achada S. Filipe', 'Achada Sto. António', 'Aeroporto da Praia', 'Centro Comercial Sucupira',
+                                   'Fazenda', 'Palmarejo', 'Sede', 'Plato']],
+                clearable=True
+            )
+        ]),
+        dbc.Col([
+            html.P("Estado dos Equipamentos"),
+            dcc.Dropdown(
+                id='estado',
+                options=[{'value': x, 'label': x}
+                         for x in ['funcionando', 'danificado']],
+                clearable=True
+            )
+        ]),
+        dbc.Col([
+            html.P("Data de Requisição"),
+            dcc.Dropdown(
+                id='data',
+                options=[{'value': '1', 'label': 'janeiro'},
+                         {'value': '2', 'label': 'fevereiro'},
+                         {'value': '3', 'label': 'março'},
+                         {'value': '4', 'label': 'abril'},
+                         {'value': '5', 'label': 'maio'},
+                         {'value': '6', 'label': 'junho'},
+                         {'value': '7', 'label': 'julho'},
+                         {'value': '8', 'label': 'agosto'},
+                         {'value': '9', 'label': 'setembro'},
+                         {'value': '10', 'label': 'outubro'},
+                         {'value': '11', 'label': 'novembro'},
+                         {'value': '12', 'label': 'dezembro'}, ],
+                clearable=True
             )
         ])
     ]),
     dbc.Row([
         dbc.Col([
-            dcc.Graph(id="pie-chart_1")
-        ])
-    ]),
-    dbc.Row([
-        dbc.Col([
-            dcc.Graph(id="pie-chart")
+            dcc.Graph(id="pie-chart_1"),
+            dcc.Graph(id="pie-chart_2")
         ])
     ])
 ])
 
 
-@app.callback(
+@ app.callback(
+    Output("total_de_equipamentos", "children"),
+    [Input("dispositivos", "value"),
+     Input("agencias", "value"),
+     Input("estado", "value"),
+     Input("data", "value"), ]
+)
+def generate_chart(dispositivos, agencias, estado, data):
+    cio2 = cio.groupby(['Nome do Produto', 'Agências',
+                       'estado do equipamento', 'Data da requisição']).mean()
+
+    if (dispositivos is None):
+        valor2 = cio
+    else:
+        valor = cio['Nome do Produto'] == dispositivos
+        valor2 = cio[valor]
+
+    if (agencias is None):
+        valor2 = valor2
+    else:
+        valor = valor2['Agências'] == agencias
+        valor2 = valor2[valor]
+
+    if (estado is None):
+        valor2 = valor2
+
+    else:
+        valor = valor2['estado do equipamento'] == estado
+        valor2 = valor2[valor]
+
+    x = len(valor2)
+    return x
+
+
+@ app.callback(
+    Output("manutencao_equipamentos", "children"),
+    [Input("dispositivos", "value"),
+     Input("agencias", "value"),
+     Input("estado", "value"),
+     Input("data", "value"), ]
+)
+def generate_chart(dispositivos, agencias, estado, data):
+    
+    values = ['concluido','em aberto','cancelado']
+    cio2 = cio[cio.status.isin(values)]
+
+    if (dispositivos is None):
+        valor2 = cio2
+    else:
+        valor = cio2['Nome do Produto'] == dispositivos
+        valor2 = cio2[valor]
+
+    if (agencias is None):
+        valor2 = valor2
+    else:
+        valor = valor2['Agências'] == agencias
+        valor2 = valor2[valor]
+
+    if (estado is None):
+        valor2 = valor2
+
+    else:
+        valor = valor2['estado do equipamento'] == estado
+        valor2 = valor2[valor]
+
+    x = len(valor2)
+    return x
+
+
+@ app.callback(
+    Output("total_reparação", "children"),
+    [Input("dispositivos", "value"),
+     Input("agencias", "value"),
+     Input("estado", "value"),
+     Input("data", "value") ]
+)
+def generate_chart(dispositivos, agencias, estado, data):
+    
+    if (dispositivos is None):
+        valor2 = cio
+    else:
+        valor = cio['Nome do Produto'] == dispositivos
+        valor2 = cio[valor]
+
+    if (agencias is None):
+        valor2 = valor2
+    else:
+        valor = valor2['Agências'] == agencias
+        valor2 = valor2[valor]
+
+    if (estado is None):
+        valor2 = valor2
+
+    else:
+        valor = valor2['estado do equipamento'] == estado
+        valor2 = valor2[valor]
+    
+    return valor2['custo de reparação'].sum()
+
+@ app.callback(
     Output("pie-chart_1", "figure"),
-    [Input("names", "value")])
-def generate_chart(names):
-    fig = px.pie(teste, values='custo de reparação', names=names)
+    [Input("dispositivos", "value"),
+     Input("agencias", "value"),
+     Input("estado", "value"),
+     Input("data", "value")])
+
+def generate_chart(dispositivos, agencias, estado, data):
+    if (dispositivos is None):
+        valor2 = cio
+    else:
+        valor = cio['Nome do Produto'] == dispositivos
+        valor2 = cio[valor]
+
+    if (agencias is None):
+        valor2 = valor2
+    else:
+        valor = valor2['Agências'] == agencias
+        valor2 = valor2[valor]
+
+    if (estado is None):
+        valor2 = valor2
+
+    else:
+        valor = valor2['estado do equipamento'] == estado
+        valor2 = valor2[valor]
+        
+    fig=px.pie(valor2, values = 'custo de reparação', names = 'Nome do Produto')
+    
     return fig
 
+@ app.callback(
+    Output("pie-chart_2", "figure"),
+    [Input("dispositivos", "value"),
+     Input("agencias", "value"),
+     Input("estado", "value"),
+     Input("data", "value")])
 
-@app.callback(
-    Output("pie-chart", "figure"),
-    [Input("equipamentos", "value")]
-)
-def generate_chart(names):
-    fig = px.pie(teste, values='custo de reparação', names=names)
+def generate_chart(dispositivos, agencias, estado, data):
+
+    
+    if (dispositivos is None):
+        valor2 = cio
+    else:
+        valor = cio['Nome do Produto'] == dispositivos
+        valor2 = cio[valor]
+
+    if (agencias is None):
+        valor2 = valor2
+    else:
+        valor = valor2['Agências'] == agencias
+        valor2 = valor2[valor]
+
+    if (estado is None):
+        valor2 = valor2
+
+    else:
+        valor = valor2['estado do equipamento'] == estado
+        valor2 = valor2[valor]
+        
+    print(valor2)
+    fig= px.pie(valor2, values = valor2.value_counts(['codigo do equipamento']).values, names = valor2['estado do equipamento'],width= 250)
     return fig
-
-@app.callback(
-    Output("codigo_do_equipamento", "children"),
-    [Input("names", "value")]
-)
-def generate_chart(names):
-    x = len(df)
-    return x
-
-@app.callback(
-    Output("nome_produto", "children"),
-    [Input("names", "value")]
-)
-def generate_chart(names):
-    x = len(dh)
-    return x
-
-
-#result = PessoModel.query.fliter_by(id=pesso)
 
 
 if __name__ == '__main__':
