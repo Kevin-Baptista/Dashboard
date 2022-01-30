@@ -15,7 +15,7 @@ import json
 
 # Leitura da base de dados
 engine = sqlalchemy.create_engine(
-    'mysql+pymysql://root:Kevin580p&@127.0.0.1:3306/ciomanutencao')
+    'mysql+pymysql://root@localhost/cio_database')
 
 cio = pd.merge(pd.read_sql_table('equipamentos', engine), pd.read_sql_table(
     'caixa_manutencao', engine), on="codigo do equipamento", how="outer")
