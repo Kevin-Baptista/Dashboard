@@ -2,13 +2,11 @@ import pandas as pd
 import sqlalchemy
 import plotly.express as px
 import dash
-from dash import dash_table
 from dash.dependencies import Input, Output
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
-from datetime import date
-import plotly.graph_objs as go
+
 
 
 import json
@@ -113,9 +111,11 @@ app.layout = dbc.Container([
                     ]),
                     dbc.Col([
                         dbc.Row([
+                            html.H5("Custo de manutenção dos equipamentos"),
                             dcc.Graph(id="pie-chart_1")
                         ]),
                         dbc.Row([
+                            html.H5("Quantidade de Equipamentos"),
                             dcc.Graph(id="pie-chart_2")
                         ])
                     ])
