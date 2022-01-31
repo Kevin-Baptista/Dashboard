@@ -81,9 +81,11 @@ app.layout = dbc.Container([
                 ])
             ]),
             dbc.Row([
+                html.H5("Custo dos tipos de manutenção"),
                 dcc.Graph(id="pie-chart_1")
                 ]),
             dbc.Row([
+                html.H5("Custo por Softwares da empresa"),
                 dcc.Graph(id="pie-chart_2")
                 ])
         ], width=4)

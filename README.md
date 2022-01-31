@@ -1,4 +1,4 @@
-# Dashboard
+
 Usando Python
 caso não funcione 
 Faça a instalação dos imports que pede ao executar
