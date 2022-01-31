@@ -14,7 +14,7 @@ import json
 
 # Leitura da base de dados
 engine = sqlalchemy.create_engine(
-    'mysql+pymysql://root:Kevin580p&@127.0.0.1:3306/ciomanutencao')
+    'mysql+pymysql://root@localhost/cio_database')
 softwares = pd.read_sql_table('softwares', engine)
 
 

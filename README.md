@@ -1,6 +1,9 @@
-# Dashboard
-Testin
-altere o engine para poder passar a sua bd
 
-bd
-crie uma bd e execute o codigo de sql que se encontra no ficheiro txt sql
+Usando Python
+caso não funcione 
+Faça a instalação dos imports que pede ao executar
+exemplo: pip install exemplo
+
+usamos xxamp + mysql:
+crie uma base de dados com nome cio_database
+e execute o comando sql que esta na pasta sql
